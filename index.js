@@ -58,7 +58,8 @@ MotionSensorAccessory.prototype = {
                                 resp.on('end', () => {
                                         this.httpExecuting = false;
                                         var status = data.match(this.statusRegex) ? 1 : 0;
-                                        this.log("motion status", status);
+                                        this.log("response:", data);
+                                        this.log("motion status:", status);
                                         callback(status);
                                 });
                         }).on("error", (err) => {
