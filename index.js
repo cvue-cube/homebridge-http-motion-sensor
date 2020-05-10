@@ -26,6 +26,7 @@ function MotionSensorAccessory(log, config) {
         this.httpExecuting = false;
 
         this.service = new Service.MotionSensor(this.name);
+        console.log("self:", this);
         setTimeout(this.monitorMotionSensorState.bind(this), this.pollInterval);
 };
 
@@ -56,7 +57,9 @@ MotionSensorAccessory.prototype = {
                                 });
                                 resp.on('end', () => {
                                         this.httpExecuting = false;
-                                        callback(data.match(this.statusRegex) ? 1 : 0);
+                                        var status = data.match(this.statusRegex) ? 1 : 0;
+                                        this.log("motion status", status);
+                                        callback(status);
                                 });
                         }).on("error", (err) => {
                                 console.error("Error: " + err.message);
