@@ -23,6 +23,7 @@ function MotionSensorAccessory(log, config) {
 
         this.detecting = true;
         this.wasDetecting = true;
+        this.httpExecuting = false;
 
         this.service = new Service.MotionSensor(this.name);
         setTimeout(this.monitorMotionSensorState.bind(this), this.pollInterval);
@@ -45,18 +46,21 @@ MotionSensorAccessory.prototype = {
         },
 
         checkMotion: function (callback) {
-                this.log("checking motion...");
-                if (this.statusUrl != null) {
+                if (this.httpExecuting == false && this.statusUrl != null) {
+                        this.log("checking motion...");
+                        this.httpExecuting = true;
                         http.get(this.statusUrl, (resp) => {
                                 let data = '';
                                 resp.on('data', (chunk) => {
                                         data += chunk;
                                 });
                                 resp.on('end', () => {
+                                        this.httpExecuting = false;
                                         callback(data.match(this.statusRegex) ? 1 : 0);
                                 });
                         }).on("error", (err) => {
                                 console.error("Error: " + err.message);
+                                this.httpExecuting = false;
                                 callback();
                         });
                 }
