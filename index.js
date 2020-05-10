@@ -45,6 +45,7 @@ MotionSensorAccessory.prototype = {
         },
 
         checkMotion: function (callback) {
+                this.log("checking motion...");
                 if (this.statusUrl != null) {
                         http.get(this.statusUrl, (resp) => {
                                 let data = '';
