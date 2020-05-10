@@ -14,6 +14,7 @@ function MotionSensorAccessory(log, config) {
         this.name = config.name;
         this.pollInterval = config.pollInterval;
         this.statusUrl = config.statusUrl || null;
+        this.statusRegex = new RegExp(config.statusRegex);
 
         if (this.statusUrl == null) {
                 this.log("statusUrl is required");
@@ -51,7 +52,7 @@ MotionSensorAccessory.prototype = {
                                         data += chunk;
                                 });
                                 resp.on('end', () => {
-                                        callback(parseInt(data));
+                                        callback(data.match(this.statusRegex) ? 1 : 0);
                                 });
                         }).on("error", (err) => {
                                 console.error("Error: " + err.message);
@@ -76,8 +77,8 @@ MotionSensorAccessory.prototype = {
                 var informationService = new Service.AccessoryInformation();
 
                 informationService
-                        .setCharacteristic(Characteristic.Manufacturer, "ContactSensor")
-                        .setCharacteristic(Characteristic.Model, "FrontDoor")
+                        .setCharacteristic(Characteristic.Manufacturer, "HttpPuller")
+                        .setCharacteristic(Characteristic.Model, "MotionSensor")
                         .setCharacteristic(Characteristic.SerialNumber, "Version 1.0.3");
 
                 this.service
